@@ -5,17 +5,49 @@ pipeline {
       agent {
         docker { image 'maven:3.8.1-adoptopenjdk-11' }
       }
-      steps {
-        sh 'mvn --version'
+      stages {
+        stage('Back-end build') {
+          steps {
+            sh '''
+              echo "Building Back-end"
+              mvn clean install
+            '''  
+          }
+        }  
+        stage('Back-end-test') {
+          steps {
+            sh '''
+              echo "Running tests"
+              mvn test
+            ''' 
+          }
+        }  
       }
     }
     stage('Front-end') {
       agent {
         docker { image 'node:16-alpine' }
       }
-      steps {
-        sh 'node --version'
+      stages }
+        stage('Build') {
+          steps {
+            sh '''
+              echo "Running front-end build"
+              npm install
+              npm run build
+            '''         
+          }
+        }
+        stage('Front-end-test') {
+          steps {
+            sh '''
+              echo "Running front-end test"
+              'npm test'
+            '''
+          } 
+        }  
       }
     }
   }
 }
+
